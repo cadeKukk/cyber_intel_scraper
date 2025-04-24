@@ -17,10 +17,12 @@ from dotenv import load_dotenv
 # Import scrapers
 from scrapers.us_cert import USCertScraper
 from scrapers.mitre import MitreScraper
-from scrapers.cisa import CISAScraper
-from scrapers.enisa import ENISAScraper
-from scrapers.ncsc import NCSCScraper
-from scrapers.threatpost import ThreatPostScraper
+from scrapers.cisa_dhs import CISADHSScraper
+from scrapers.fbi_cyber import FBICyberScraper
+from scrapers.nsa_dod import NSADoDScraper
+from scrapers.nist_standards import NISTStandardsScraper
+from scrapers.research_academic import ResearchAcademicScraper
+from scrapers.industry_orgs import IndustryOrgsScraper
 
 # Import utilities
 from utils.database import Database
@@ -49,10 +51,12 @@ def run_scrapers(args):
     scrapers = {
         'us-cert': USCertScraper(db),
         'mitre': MitreScraper(db),
-        'cisa': CISAScraper(db),
-        'enisa': ENISAScraper(db),
-        'ncsc': NCSCScraper(db),
-        'threatpost': ThreatPostScraper(db)
+        'cisa-dhs': CISADHSScraper(db),
+        'fbi-cyber': FBICyberScraper(db),
+        'nsa-dod': NSADoDScraper(db),
+        'nist-standards': NISTStandardsScraper(db),
+        'research-academic': ResearchAcademicScraper(db),
+        'industry-orgs': IndustryOrgsScraper(db)
     }
     
     # Determine which scrapers to run

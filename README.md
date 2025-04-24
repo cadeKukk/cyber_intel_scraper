@@ -16,12 +16,36 @@ A comprehensive Python application for gathering cybersecurity and cyber terrori
 
 The tool currently scrapes the following sources:
 
-- [US-CERT](https://www.cisa.gov/) - Cybersecurity and Infrastructure Security Agency
+### US Government & Military Sources
+- [CISA](https://www.cisa.gov/) - Cybersecurity and Infrastructure Security Agency
+- [US-CERT](https://www.cisa.gov/uscert/) - United States Computer Emergency Readiness Team
+- [FBI Cyber Division](https://www.fbi.gov/investigate/cyber) - Federal Bureau of Investigation Cyber Division
+- [IC3](https://www.ic3.gov/) - Internet Crime Complaint Center
+- [NSA Cybersecurity Directorate](https://www.nsa.gov/cybersecurity/) - National Security Agency Cybersecurity Directorate
+- [US Cyber Command](https://www.cybercom.mil/) - United States Cyber Command
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework) - National Institute of Standards & Technology Cybersecurity Framework
+- [NCCoE](https://www.nccoe.nist.gov/) - National Cybersecurity Center of Excellence
+- [DC3](https://www.dc3.mil/) - Defense Cyber Crime Center
+- [DARPA I2O](https://www.darpa.mil/about-us/offices/i2o) - Defense Advanced Research Projects Agency Information Innovation Office
+
+### Threat Intelligence Sources
 - [MITRE ATT&CK](https://attack.mitre.org/) - MITRE's Adversarial Tactics, Techniques, and Common Knowledge database
-- [CISA Known Exploited Vulnerabilities Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)
-- [ENISA](https://www.enisa.europa.eu/) - European Union Agency for Cybersecurity
-- [NCSC](https://www.ncsc.gov.uk/) - National Cyber Security Centre (UK)
-- [ThreatPost](https://threatpost.com/) - Cybersecurity news and analysis site
+- [Cyber Threat Alliance](https://cyberthreatalliance.org/) - Cybersecurity information sharing organization
+- [SANS ISC](https://isc.sans.edu/) - SANS Internet Storm Center
+- [CERT/CC](https://www.kb.cert.org/) - Computer Emergency Response Team Coordination Center
+
+### Information Sharing Centers & Industry Organizations
+- [CIS](https://www.cisecurity.org/) - Center for Internet Security
+- [FS-ISAC](https://www.fsisac.com/) - Financial Services Information Sharing and Analysis Center
+- [MS-ISAC](https://www.cisecurity.org/ms-isac/) - Multi-State Information Sharing and Analysis Center
+- [FIRST](https://www.first.org/) - Forum of Incident Response and Security Teams
+
+### Research & Academic Sources
+- [SEI](https://www.sei.cmu.edu/) - Software Engineering Institute
+- [CERIAS](https://www.cerias.purdue.edu/) - Center for Education and Research in Information Assurance and Security
+- [Stanford Cyber Initiative](https://cyber.stanford.edu/) - Stanford University Cyber Initiative
+
+The scraper is designed to be easily extended with additional sources. Each source is implemented as a separate scraper class that inherits from a common base class.
 
 ## Installation
 
