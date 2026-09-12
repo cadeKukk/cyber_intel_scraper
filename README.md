@@ -2,6 +2,21 @@
 
 A comprehensive Python application for gathering cybersecurity and cyber terrorism intelligence from various international and US sources. This tool collects data on vulnerabilities, security alerts, threat actors, and cybersecurity incidents from authoritative sources and stores them in a structured format for analysis.
 
+## Offline report demo
+
+![Report template populated with explicitly fictional records](docs/screenshots/report.png)
+
+[Open or download the sample HTML report](docs/sample-report.html). It uses the existing report generator with one fictional vulnerability and one fictional alert. The yellow notice separates the sample from collected intelligence.
+
+To regenerate it from the repository root:
+
+```sh
+python -m pip install pandas
+python docs/demo_report.py
+```
+
+The script writes `docs/sample-report.html`. It does not contact any source or open a database. The screenshot shows that output in a browser on 2026-09-12.
+
 ## Features
 
 - **Multi-Source Intelligence**: Collects data from US and international cybersecurity organizations
@@ -256,4 +271,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 2. Create your feature branch: `git checkout -b feature/amazing-feature`
 3. Commit your changes: `git commit -m 'Add some amazing feature'`
 4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request 
+5. Open a Pull Request
