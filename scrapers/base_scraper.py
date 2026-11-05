@@ -131,6 +131,55 @@ class BaseScraper(ABC):
             logger.error(f"Failed to save data from {self.source_name}: {str(e)}")
             return False
     
+    KEV_FEED_URL = ("https://www.cisa.gov/sites/default/files/feeds/"
+                    "known_exploited_vulnerabilities.json")
+    KEV_PAGE_URL = "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+
+    def fetch_kev_catalog(self) -> List[Dict]:
+        """
+        Fetch CISA's Known Exploited Vulnerabilities catalog from its JSON feed.
+
+        The catalog's HTML page refuses scripted requests (403), but CISA
+        publishes the same data as JSON.
+
+        Returns:
+            List of vulnerability dictionaries
+        """
+        response = self.get_page(self.KEV_FEED_URL)
+        if not response:
+            return []
+
+        try:
+            entries = response.json().get("vulnerabilities", [])
+        except ValueError as e:
+            logger.error(f"KEV feed was not valid JSON: {str(e)}")
+            return []
+
+        def parse_date(value):
+            try:
+                return datetime.strptime(value, "%Y-%m-%d") if value else None
+            except ValueError:
+                logger.warning(f"Could not parse date: {value}")
+                return None
+
+        vulnerabilities = []
+        for entry in entries:
+            if not entry.get("cveID"):
+                continue
+            vulnerabilities.append({
+                "cve_id": entry["cveID"],
+                "vendor_project": entry.get("vendorProject", ""),
+                "product": entry.get("product", ""),
+                "vulnerability_name": entry.get("vulnerabilityName", ""),
+                "date_added": parse_date(entry.get("dateAdded")),
+                "due_date": parse_date(entry.get("dueDate")),
+                "details": entry.get("shortDescription"),
+                "source_url": self.KEV_PAGE_URL,
+            })
+
+        logger.info(f"Fetched {len(vulnerabilities)} vulnerabilities from the CISA KEV feed")
+        return vulnerabilities
+
     @abstractmethod
     def scrape(self) -> bool:
         """
