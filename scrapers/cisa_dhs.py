@@ -64,76 +64,13 @@ class CISADHSScraper(BaseScraper):
     
     def scrape_vulnerabilities(self) -> List[Dict]:
         """
-        Scrape vulnerabilities from the Known Exploited Vulnerabilities Catalog.
-        
+        Get the Known Exploited Vulnerabilities Catalog (from CISA's JSON feed).
+
         Returns:
             List of vulnerability dictionaries
         """
-        vulnerabilities = []
-        
-        try:
-            response = self.get_page(self.advisories_url)
-            if not response:
-                return vulnerabilities
-                
-            soup = self.parse_html(response)
-            if not soup:
-                return vulnerabilities
-            
-            # Find the vulnerability table
-            vuln_table = soup.find('table', {'class': 'usa-table'})
-            if not vuln_table:
-                logger.warning("Vulnerability table not found on CISA/DHS page")
-                return vulnerabilities
-            
-            # Process each row in the table
-            rows = vuln_table.find_all('tr')
-            for row in rows[1:]:  # Skip header row
-                cells = row.find_all('td')
-                if len(cells) >= 6:
-                    try:
-                        cve_id = cells[0].text.strip()
-                        vendor_project = cells[1].text.strip()
-                        product = cells[2].text.strip()
-                        vulnerability_name = cells[3].text.strip()
-                        
-                        # Parse date
-                        date_added_text = cells[4].text.strip()
-                        date_added = None
-                        try:
-                            date_added = datetime.strptime(date_added_text, "%m/%d/%Y")
-                        except ValueError:
-                            logger.warning(f"Could not parse date: {date_added_text}")
-                        
-                        due_date_text = cells[5].text.strip()
-                        due_date = None
-                        try:
-                            due_date = datetime.strptime(due_date_text, "%m/%d/%Y")
-                        except ValueError:
-                            logger.warning(f"Could not parse date: {due_date_text}")
-                        
-                        vulnerability = {
-                            "cve_id": cve_id,
-                            "vendor_project": vendor_project,
-                            "product": product,
-                            "vulnerability_name": vulnerability_name,
-                            "date_added": date_added,
-                            "due_date": due_date,
-                            "source_url": self.advisories_url,
-                        }
-                        
-                        vulnerabilities.append(vulnerability)
-                    except Exception as e:
-                        logger.error(f"Error parsing vulnerability row: {str(e)}")
-                        continue
-            
-            logger.info(f"Scraped {len(vulnerabilities)} vulnerabilities from CISA/DHS")
-            
-        except Exception as e:
-            logger.error(f"Error scraping CISA/DHS vulnerabilities: {str(e)}")
-        
-        return vulnerabilities
-    
+        return self.fetch_kev_catalog()
+
     def scrape_alerts(self) -> List[Dict]:
         """
         Scrape alerts from CISA/DHS.

@@ -8,20 +8,20 @@ A Python command-line tool that collects cybersecurity advisories, known exploit
 
 ## What works today
 
-Most of the sites this scraper was written for have since moved their pages or block scripted requests. A full `python main.py` run on 2026-11-05 (Python 3.14, from a home connection) gave:
+Most of the sites this scraper was written for have since moved their pages or block scripted requests. Runs on 2026-11-05 (Python 3.14, from a home connection) gave:
 
 | `--sources` key | Sites | Result on 2026-11-05 |
 |---|---|---|
 | `mitre` | MITRE ATT&CK (the `enterprise-attack.json` file in [mitre/cti](https://github.com/mitre/cti)) | **193 threat actors saved** |
-| `us-cert` | CISA Known Exploited Vulnerabilities page, US-CERT alerts | 0 (both pages return 403) |
-| `cisa-dhs` | CISA Known Exploited Vulnerabilities page, alerts, bulletins | 0 (all three return 403) |
+| `us-cert` | CISA Known Exploited Vulnerabilities catalog (JSON feed), US-CERT alerts | **1,768 vulnerabilities saved**; alerts 0 (page returns 403) |
+| `cisa-dhs` | CISA Known Exploited Vulnerabilities catalog (JSON feed), alerts, bulletins | **1,768 vulnerabilities saved**; alerts and bulletins 0 (pages return 403) |
 | `fbi-cyber` | FBI cyber alerts, PINs, FLASH reports, IC3 | 0 (FBI pages 404; IC3 parsed 0 items) |
 | `nsa-dod` | NSA advisories and alerts, US Cyber Command, DC3 | 0 (all return 403) |
 | `nist-standards` | NIST CSF updates, NVD, NCCoE, SP 800 publications | 0 (CSF and NVD parsed 0 items; NCCoE 403; SP 800 page 404) |
 | `research-academic` | SEI, CERIAS, Stanford Cyber Initiative, DARPA I2O | 0 (all four pages 404) |
 | `industry-orgs` | SANS ISC, Cyber Threat Alliance, CIS, FS-ISAC, MS-ISAC, FIRST, CERT/CC | 0 (pages load but parse 0 items, or 404 / connection closed) |
 
-CISA still publishes the same catalog as a JSON feed (`https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` returned 200 the same day), so the vulnerability scrapers could be pointed there.
+The catalog's web page returns 403 to scripts, so both vulnerability scrapers read CISA's [JSON feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) of the same catalog instead. Both store the full catalog under their own source name, so running both stores each CVE twice.
 
 ## How it fits together
 
@@ -51,10 +51,8 @@ git clone https://github.com/cadeKukk/cyber_intel_scraper.git
 cd cyber_intel_scraper
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install requests beautifulsoup4 pandas python-dotenv schedule colorlog sqlalchemy
+pip install -r requirements.txt
 ```
-
-Those seven packages are the ones the code imports. `requirements.txt` pins 2023 versions; `pip install -r requirements.txt` fails on Python 3.14 because pandas 2.1.1 has no wheel for it and doesn't build. It also lists four packages nothing imports (tqdm, feedparser, aiohttp, pycountry). It may still work on the older Python versions those pins were made for; that hasn't been checked.
 
 No API keys or environment variables are needed.
 
@@ -93,9 +91,9 @@ paths = db.export_to_json(output_dir="exports")   # one JSON file per record typ
 
 ## Known issues
 
-- Only the MITRE scraper returns data right now (see [What works today](#what-works-today)).
+- Only the MITRE scraper and the two KEV vulnerability scrapers return data right now (see [What works today](#what-works-today)).
 - Running a scraper again stores every record again: two MITRE runs leave 386 rows, not 193.
-- MITRE threat actors get a `source_url` built from the STIX ID (`/groups/intrusion-set--…`), which 404s. The ATT&CK group ID (`G0006` etc.) ends up in `capabilities`; `https://attack.mitre.org/groups/G0006/` is the working link. `country`, `motivation`, `first_seen` and `last_seen` are always empty because the JSON doesn't carry them.
+- MITRE threat actors' `country`, `motivation`, `first_seen` and `last_seen` are always empty because the JSON doesn't carry them.
 - No scraper writes incidents, so that table stays empty.
 - The report's "Data Sources" list is fixed text and names sites this tool doesn't scrape (ENISA, NCSC, ThreatPost).
 - Requests use a fixed Chrome 91 user agent and don't check robots.txt; the only delays are between retries.

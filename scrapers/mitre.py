@@ -108,6 +108,7 @@ class MitreScraper(BaseScraper):
                     
                     # Extract capabilities from external references
                     capabilities = []
+                    attack_id = None
                     for ref in group.get('external_references', []):
                         if ref.get('source_name') == 'mitre-attack' and 'url' in ref:
                             url = ref['url']
@@ -115,6 +116,7 @@ class MitreScraper(BaseScraper):
                             tech_id = ref.get('external_id', '')
                             if tech_id:
                                 capabilities.append(tech_id)
+                                attack_id = attack_id or tech_id
                     
                     # Build threat actor object
                     threat_actor = {
@@ -127,7 +129,8 @@ class MitreScraper(BaseScraper):
                         'last_seen': last_seen,
                         'capabilities': capabilities,
                         'source': self.source_name,
-                        'source_url': urljoin(self.base_url, f"/groups/{group_id}")
+                        # ATT&CK pages use the group ID (G0006), not the STIX ID
+                        'source_url': urljoin(self.base_url, f"/groups/{attack_id or group_id}/")
                     }
                     
                     threat_actors.append(threat_actor)
